@@ -2,20 +2,20 @@
 style definitions for visualization - in this case empty
 */
 
-.custom-vis-layout.mstrvisd3multichart .bar {
+.custom-vis-layout.MstrVisD3MultiChart .bar {
     fill: steelblue;
 }
-.custom-vis-layout.mstrvisd3multichart .bar:hover {
+.custom-vis-layout.MstrVisD3MultiChart .bar:hover {
     fill: brown;
 }
-.custom-vis-layout.mstrvisd3multichart .axis {
+.custom-vis-layout.MstrVisD3MultiChart .axis {
     font: 10px sans-serif;
 }
-.custom-vis-layout.mstrvisd3multichart .axis path, .axis line {
+.custom-vis-layout.MstrVisD3MultiChart .axis path, .axis line {
     fill: none;
     stroke: #000000;
     shape-rendering: crispEdges;
 }
-.custom-vis-layout.mstrvisd3multichart .x.axis path {
+.custom-vis-layout.MstrVisD3MultiChart .x.axis path {
     display: none;
 }
