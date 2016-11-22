@@ -1,0 +1,21 @@
+/*
+style definitions for visualization - in this case empty
+*/
+
+.custom-vis-layout.mstrvisd3multichart .bar {
+    fill: steelblue;
+}
+.custom-vis-layout.mstrvisd3multichart .bar:hover {
+    fill: brown;
+}
+.custom-vis-layout.mstrvisd3multichart .axis {
+    font: 10px sans-serif;
+}
+.custom-vis-layout.mstrvisd3multichart .axis path, .axis line {
+    fill: none;
+    stroke: #000000;
+    shape-rendering: crispEdges;
+}
+.custom-vis-layout.mstrvisd3multichart .x.axis path {
+    display: none;
+}

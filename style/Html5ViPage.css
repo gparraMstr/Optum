@@ -1,0 +1,9 @@
+/*
+style definitions for icon on gallery view - in this case empty we will use default one
+*/
+
+.mstrmojo-VIGallery .mstrmojo-VIGalleryList .item.ic-MstrVisD3MultiChart>div>div {
+   background-image: url(images/mstrVisD3MultiChartIcon.png);
+   background-position: 0 0;     
+   margin: 5px;
+}
