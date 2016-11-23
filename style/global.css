@@ -19,3 +19,33 @@ style definitions for visualization - in this case empty
 .custom-vis-layout.MstrVisD3MultiChart .x.axis path {
     display: none;
 }
+
+.custom-vis-layout.MstrVisD3MultiChart .bullet { font: 10px sans-serif; }
+.custom-vis-layout.MstrVisD3MultiChart .bullet .marker { stroke: #000; stroke-width: 2px; }
+.custom-vis-layout.MstrVisD3MultiChart .bullet .tick line { stroke: #666; stroke-width: .5px; }
+.custom-vis-layout.MstrVisD3MultiChart .bullet .range.s0 { fill: #eee; }
+.custom-vis-layout.MstrVisD3MultiChart .bullet .range.s1 { fill: #ddd; }
+.custom-vis-layout.MstrVisD3MultiChart .bullet .range.s2 { fill: #ccc; }
+.custom-vis-layout.MstrVisD3MultiChart .bullet .measure.s0 { fill: lightsteelblue; }
+.custom-vis-layout.MstrVisD3MultiChart .bullet .measure.s1 { fill: steelblue; }
+.custom-vis-layout.MstrVisD3MultiChart .bullet .title { font-size: 14px; font-weight: bold; }
+.custom-vis-layout.MstrVisD3MultiChart .bullet .subtitle { fill: #999; }
+
+
+.custom-vis-layout.MstrVisD3MultiChart table { 
+	font-family: 'Helvetica Neue', Helvetica; 
+	font-weight: 300; 
+	padding: 20px;
+
+	display: table-caption;
+}
+
+.custom-vis-layout.MstrVisD3MultiChart table tbody { 
+	overflow-y: auto;
+    display: inline-block
+}
+
+.custom-vis-layout.MstrVisD3MultiChart th { text-align: left; }
+.custom-vis-layout.MstrVisD3MultiChart th, td { padding: 0 1em 0.5ex 0;}
+.custom-vis-layout.MstrVisD3MultiChart th.center, td.center { text-align: center; }
+.custom-vis-layout.MstrVisD3MultiChart th.num, td.num { text-align: right; }
