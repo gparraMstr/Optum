@@ -185,7 +185,8 @@
             var metricName = this.visualization.dataInterface.getColHeaders(0).getHeader(0).getName();
 
             var table = d3.select(this.visualization.domNode)
-                .append('table');
+                .append('table')
+                .attr('cellspacing', '0');
 
 
             // create table header
