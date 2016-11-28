@@ -157,7 +157,7 @@
 		MstrVisD3MultiChart.prototype.render = function() {
 			// data: {nodes:[],links:[]}
 			console.log('Entering render Function.');
-			debugger;
+
 			//...YOUR JS CODE...
             this.visualization.domNode.innerText = "Empty text";
 
@@ -188,11 +188,9 @@
             var data = this.data.nodes; //this.visualization.dataInterface.getRawData(mstrmojo.models.template.DataInterface.ENUM_RAW_DATA_FORMAT.ROWS);
             var columns = this.columns; //this.visualization.dataInterface.getColumnHeaderData();
 
-            var metricName = this.visualization.dataInterface.getColHeaders(0).getHeader(0).getName();
+            debugger;
 
-            var multichart = d3.bullet()
-                .width(width)
-                .height(35);
+            var metricName = this.visualization.dataInterface.getColHeaders(0).getHeader(0).getName();
 
             var table = d3.select(this.visualization.domNode)
                 .append('table');
@@ -225,10 +223,16 @@
                             if ((c['otp'] == 12) && (typeof row.values[c['n']] == "string")) {
                                 cell['html'] = row.values[c['n']];
                                 cell['cl'] = 'title';
+
+                                cell['id'] = c['id'] + i;
                             } else {
                                 cell['html'] = row.values[c['n']];
                                 cell['cl'] = 'num';
+
+                                cell['id'] = c['oid'] + i;
                             }
+
+                            
                         }
                       /*  d3.keys(c).forEach(function(k) {
                             cell[k] = typeof c[k] == 'function' ? c[k](row,i) : row[c[k]];
@@ -237,40 +241,31 @@
                         return cell;
                     });
                 }).enter()
-                .append('td')
-                .html(function(d, a) {
-                	if (typeof d['html'] == 'string') {
-                    	return d['html'];
-                    } else {
-                    	var multichart = d3.bullet()
-			                .height(35);
+                .append(function(d) {
+                	var td = document.createElement("td");
+                	td.setAttribute('id', d['id']);
 
-			            var svg = d3.select(this.parentNode).selectAll("svg")
+                	if (typeof d['html'] == 'string') {
+                		//d3.select(this.parentNode).append("td").text(d['html']);
+                    	td.innerHTML = d['html'];
+                    } else {
+                    	d3.select(td).selectAll("svg")
 			                .data([{"title":"Revenue","subtitle":"US$, in thousands","ranges":[d['html'][0],d['html'][1],d['html'][2]],
 			                		"measures":[d['html'][3]],"markers":[d['html'][4]]}])
-			                .enter().append("td").append("svg")
+			                .enter().append("svg")
 			                .attr("class", "bullet")
 			                .attr("width", 400)
 			                .attr("height", 75)
 			                .append("g")
 			                .attr("transform", "translate(10, 10)")
-			                .call(multichart);
+			                .call(d3.bullet().height(35));
                     }
-                })
+
+                	return this.appendChild(td);
+                })                
                 .attr('class', function(d) {
                     return d['cl'];
                 });
-
-            var svg = d3.select(this.visualization.domNode).selectAll("svg")
-                .data([{"title":"Revenue","subtitle":"US$, in thousands","ranges":[8890,9234,11300],"measures":[8960],"markers":[0]}])
-                .enter().append("svg")
-                .attr("class", "bullet")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", 80)
-                .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-                .call(multichart);
-
 
             x.domain(data.map(function(d) {
                 return d.name;
