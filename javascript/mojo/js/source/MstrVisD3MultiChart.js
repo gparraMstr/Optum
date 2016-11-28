@@ -2,13 +2,158 @@
  * MstrVisD3MultiChart is the plugin for Optum project to support Multichart visualization 
  * in HTML5 for Dashboards.
  */
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// _HasSelector.js
+(function() {
+
+    /**
+     * <p>
+     * A mixin for creating the supporting Selector action from visualization.
+     * <p>
+     * 
+     * @mixin
+     */
+    mstrmojo._HasSelector = mstrmojo.provide('mstrmojo._HasSelector',
+
+    /**
+     * @lends mstrmojo._HasSelector.prototype
+     */
+    {
+        _mixinName : 'mstrmojo._HasSelector',
+        /**
+         * Prepare data for this mixin
+         */
+        postBuildRendering : function() {
+            if (this._super) {
+                this._super();
+            }
+            if (!this.dfm) {
+
+                var ts = this.model.gts;
+                if (ts) {
+                    var tts = (ts.row || []).concat(ts.col || []);
+                    var i = 0, tCnt = 0, fCnt = 0, len = tts && tts.length, t = null, r = null;
+                    for (; i < len; i++) {
+                        t = tts[i];
+                        if (t.otp != -1) {
+                            tCnt++;
+                            if (t.es) {
+                                fCnt++;
+                                r = t;
+                            }
+                        }
+                    }
+                    this.dfm = (fCnt == 1 && tCnt == 1) ? r : null;
+                }
+            }
+        },
+        /**
+         * Handle simple selector action
+         * 
+         * @param {string}
+         *            Attribute element id, should be as from DataFormater
+         */
+        makeSelection : function(attElemId, dfm) {
+            var sc = dfm && dfm["sc"];
+            if (sc != null) {
+                var dm = this.model.docModel;
+                if (typeof (sc["tks"]) != "undefined") {
+                    var ifws = dm.getTargetInfoWin(sc["tks"]);
+                    if (ifws && ifws.length) {
+                        for (var i = 0; i < ifws.length; i++) {
+                            dm.showInfoWin(ifws[i], sc.anchor, "h", true);
+                        }
+                    }
+                }
+            }
+            var events = [];
+            var scm = this.model.getSelectorControlMapInfo();
+            if (dfm) {
+                // reset previous selections
+                for (var i = 0; i < scm.length; i++) {
+                    if (scm[i].sc) {
+                        events.push(this.getEventForSelection("u;;(All)", scm[i], this.model));
+                    }
+                }
+                // make the selection of the new element
+                events.push(this.getEventForSelection(attElemId, dfm, this.model));
+                if (events.length > 0) {
+                    this.submitEvents(events);
+                }
+            }
+        },
+        submitEvents : function(events) {
+            this.model.controller.model.slice({
+                bufferedSlices : true,
+                tks : (mstrmojo.hash.any(events) || {}).tks,
+                events : events
+            });
+        },
+        getEventForSelection : function(elementID, dfm, model) {
+            var m = model.data, sc = dfm && dfm["sc"];
+            if (sc != null) {
+                var result = {
+                    ck : sc.ck,
+                    eid : elementID,
+                    src : m.k,
+                    tks : sc.tks,
+                    ctlKey : sc.ckey,
+                    include : true
+                };
+                return result;
+            }
+            return null;
+        },
+        resetSelections : function() {
+            var events = [];
+            var scm = this.model.getSelectorControlMapInfo();
+            // reset previous selections
+            for (var i = 0; i < scm.length; i++) {
+                if (scm[i].sc) {
+                    events.push(this.getEventForSelection("u;;(All)", scm[i], this.model));
+                }
+            }
+            if (events.length > 0) {
+                this.submitEvents(events);
+            }
+        },
+        /**
+         * Check if given element is currently selected in selector functionality
+         * 
+         * @param {string}
+         *            value should be as from DataFormater
+         * @return {bool} is element selected
+         */
+        isElementSelected : function(attElementID) {
+            if (!this.idSelected) {
+                this.idSelected = -1;
+                if (this.dfm && this.dfm.sc) {
+                    if (this.dfm.sc.ces && this.dfm.sc.ces.length > 0) {
+                        var idx = this.dfm.sc.ces[0].id;
+                        this.idSelected = parseInt(idx.substr(idx.lastIndexOf(":") + 1));
+                        if (isNaN(this.idSelected)) {
+                            idx = idx.substr(0, idx.lastIndexOf(":"));
+                            this.idSelected = parseInt(idx.substr(idx.lastIndexOf(":") + 1));
+                        }
+                    }
+                }
+            }
+            attElementID = attElementID.substr(0, attElementID.lastIndexOf(":"));
+            attElementID = parseInt(attElementID.substr(attElementID.lastIndexOf(":") + 1));
+            return attElementID == this.idSelected;
+        }
+    });
+}());
+// //////////////////////////////////////////////////////////////////////////////////////////////////
 (function () {
     // We need to define this code as plugin in mstrmojo object
     if (!mstrmojo.plugins.Optum) {
         mstrmojo.plugins.Optum = {};
     }
     // Visualization requires library to render, and in this
-    mstrmojo.requiresCls("mstrmojo.CustomVisBase");
+    mstrmojo.requiresCls("mstrmojo.CustomVisBase", "mstrmojo.models.template.DataInterface", "mstrmojo._HasSelector");
+
     // Declaration of the visualization object
     mstrmojo.plugins.Optum.MstrVisD3MultiChart = mstrmojo.declare(
         //We need to declare that our code extends CustomVisBase
@@ -27,159 +172,23 @@
                     url: "../plugins/Optum/javascript/d3.v3.min.js"              
                 },
                 {
+                    url: "../plugins/Optum/javascript/jquery-3.1.1.min.js"              
+                },
+                {
                     url: "../plugins/Optum/javascript/bullet.js"              
+                }, 
+                {
+                    url : "../plugins/Optum/javascript/BaseInterface.js"
+                }, 
+                {
+                    url : "../plugins/Optum/javascript/MstrVisD3MultiChartInterface.js"
                 }
             ],
             /**
             * Rendering Multichart using D3 JS framework for Optum project 
             */
             plot: function () { 
-                //...YOUR JS CODE...
-                this.domNode.innerText = "Empty text";
-
-                // Define this code as a plugin in the mstrmojo object
-                if (!mstrmojo.plugins.Optum) {
-                    mstrmojo.plugins.Optum = {};
-                }
-
-                if (this.domNode.childNodes.length === 1) {
-                    this.domNode.removeChild(this.domNode.childNodes[0]);
-                }
-                
-                var margin = {top: 10, right: 30, bottom: 50, left: 80},
-                     width = parseInt(this.width,10) - margin.left - margin.right,
-                     height = parseInt(this.height,10) - margin.top - margin.bottom;
-
-
-               /* var chart = d3.select(this.domNode).append("svg").attr("width", width + margin.left + margin.right)
-                     .attr("height", height + margin.top + margin.bottom)
-                     .append("g")
-                     .attr("transform", "translate(" + margin.left + "," + margin.top + ")"); */
-
-                // create table
-                
-                var x = d3.scale.ordinal()
-                     .rangeRoundBands([0, width], 0.1);
-
-                var data = this.dataInterface.getRawData(mstrmojo.models.template.DataInterface.ENUM_RAW_DATA_FORMAT.ROWS);
-                var columns = this.dataInterface. getColumnHeaderData();
-
-                var metricName = this.dataInterface.getColHeaders(0).getHeader(0).getName();
-
-
-                var multichart = d3.bullet()
-                    .width(width)
-                    .height(35);
-
-                var svg = d3.select(this.domNode).selectAll("svg")
-                    .data([{"title":"Revenue","subtitle":"US$, in thousands","ranges":[150,225,300],"measures":[220,270],"markers":[250]}])
-                    .enter().append("svg")
-                    .attr("class", "bullet")
-                    .attr("width", width + margin.left + margin.right)
-                    .attr("height", 80)
-                    .append("g")
-                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-                    .call(multichart);
-
-                var table = d3.select(this.domNode)
-                    .append('table');
-
-                // create table header
-                table.append('thead').append('tr')
-                    .selectAll('th')
-                    .data(columns).enter()
-                    .append('th')
-                    .attr('class', function(d) {
-                        return (d['otp'] == 5 ? 'num':'title');
-                    })
-                    .text(function(d) {
-                        return d['n'];
-                    });
-
-                // create table body
-                table.append('tbody')
-                    .attr("height", height - 80)
-                    .selectAll('tr')
-                    .data(data).enter()
-                    .append('tr')
-                    .selectAll('td')
-                    .data(function(row, i) {
-                        return columns.map(function(c) {
-                            // compute cell values for this specific row
-                            var cell = {};
-
-                            if (typeof row[c['n']] != 'undefined') {
-                                if ((c['otp'] == 12) && (typeof row[c['n']] == "string")) {
-                                    cell['html'] = row[c['n']];
-                                    cell['cl'] = 'title';
-                                } else {
-                                    cell['html'] = row[c['n']]['v'];
-                                    cell['cl'] = 'num';
-                                }
-                            }
-                          /*  d3.keys(c).forEach(function(k) {
-                                cell[k] = typeof c[k] == 'function' ? c[k](row,i) : row[c[k]];
-                            }); */
-
-                            return cell;
-                        });
-                    }).enter()
-                    .append('td')
-                    .html(function(d) { 
-                        return d['html'];
-                    })
-                    .attr('class', function(d) {
-                        return d['cl'];
-                    });
-
-
-
-                x.domain(data.map(function(d) {
-                    return d.name;
-                }));
-
-                var y = d3.scale.linear()
-                    .range([height, 0]).domain([0, d3.max(data, function(d) {
-                        return d.value;
-                })]);
-                
-                var xAxis = d3.svg.axis()
-                    .scale(x)
-                    .orient("bottom");
-                
-                var yAxis = d3.svg.axis()
-                    .scale(y)
-                    .orient("left");
-                /*
-                chart.append("g")
-                    .attr("class", "x axis")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(xAxis);
-                
-                chart.append("g")
-                    .attr("class", "y axis")
-                    .call(yAxis).append("text")
-                    .attr("transform", "rotate(-90)")
-                    .attr("y", 6)
-                    .attr("dy", ".71em")
-                    .style("text-anchor", "end")
-                    .text(metricName);
-                
-                chart.selectAll(".bar")
-                    .data(data)
-                    .enter().append("rect")
-                    .attr("class", "bar")
-                    .attr("x", function(d) {
-                        return x(d.name);
-                    })
-                    .attr("y", function(d) {
-                        return y(d.value);
-                    })
-                    .attr("height", function(d) {
-                        return height - y(d.value);
-                    })
-                    .attr("width", x.rangeBand());       
-                    */         
+                this.customVisInterface = new customVisInterface.MstrVisD3MultiChart(this);
             }
         });
 })();
