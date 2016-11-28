@@ -2,6 +2,11 @@
 style definitions for visualization - in this case empty
 */
 
+.custom-vis-layout.MstrVisD3MultiChart {
+	position: relative;
+    overflow: auto;
+}
+
 .custom-vis-layout.MstrVisD3MultiChart .bar {
     fill: steelblue;
 }
@@ -35,17 +40,22 @@ style definitions for visualization - in this case empty
 .custom-vis-layout.MstrVisD3MultiChart table { 
 	font-family: 'Helvetica Neue', Helvetica; 
 	font-weight: 300; 
-	padding: 20px;
+	padding: 5px;
 
-	display: table-caption;
+	table-layout: auto;
+    width: auto;
+
+    vertical-align: top;
+    white-space: nowrap;
+    writing-mode: lr-tb;
 }
 
 .custom-vis-layout.MstrVisD3MultiChart table tbody { 
-	overflow-y: auto;
-    display: inline-block
+	display: table-row-group;
+    vertical-align: middle;
 }
 
 .custom-vis-layout.MstrVisD3MultiChart th { text-align: left; }
 .custom-vis-layout.MstrVisD3MultiChart th, td { padding: 0 1em 0.5ex 0;}
 .custom-vis-layout.MstrVisD3MultiChart th.center, td.center { text-align: center; }
-.custom-vis-layout.MstrVisD3MultiChart th.num, td.num { text-align: right; }
+.custom-vis-layout.MstrVisD3MultiChart th.num, td.num { text-align: center; }

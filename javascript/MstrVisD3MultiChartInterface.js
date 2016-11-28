@@ -174,12 +174,6 @@
                  width = parseInt(this.visualization.width,10) - margin.left - margin.right,
                  height = parseInt(this.visualization.height,10) - margin.top - margin.bottom;
 
-
-           /* var chart = d3.select(this.visualization.domNode).append("svg").attr("width", width + margin.left + margin.right)
-                 .attr("height", height + margin.top + margin.bottom)
-                 .append("g")
-                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")"); */
-
             // create table
             
             var x = d3.scale.ordinal()
@@ -188,15 +182,19 @@
             var data = this.data.nodes; //this.visualization.dataInterface.getRawData(mstrmojo.models.template.DataInterface.ENUM_RAW_DATA_FORMAT.ROWS);
             var columns = this.columns; //this.visualization.dataInterface.getColumnHeaderData();
 
-            debugger;
-
             var metricName = this.visualization.dataInterface.getColHeaders(0).getHeader(0).getName();
 
             var table = d3.select(this.visualization.domNode)
                 .append('table');
 
+
             // create table header
-            table.append('thead').append('tr')
+            table.append('colgroup').selectAll('col')
+            	.data(columns).enter()
+                .append('col');
+
+            // create table header
+            table.append('tbody').append('tr')
                 .selectAll('th')
                 .data(columns).enter()
                 .append('th')
@@ -208,8 +206,8 @@
                 });
 
             // create table body
-            table.append('tbody')
-                .attr("height", height - 80)
+            table.select('tbody')
+                //.attr("height", height - 80)
                 .selectAll('tr')
                 .data(data).enter()
                 .append('tr')
@@ -231,12 +229,7 @@
 
                                 cell['id'] = c['oid'] + i;
                             }
-
-                            
                         }
-                      /*  d3.keys(c).forEach(function(k) {
-                            cell[k] = typeof c[k] == 'function' ? c[k](row,i) : row[c[k]];
-                        }); */
 
                         return cell;
                     });
@@ -254,11 +247,11 @@
 			                		"measures":[d['html'][3]],"markers":[d['html'][4]]}])
 			                .enter().append("svg")
 			                .attr("class", "bullet")
-			                .attr("width", 400)
-			                .attr("height", 75)
+			                .attr("width", 350)
+			                .attr("height", 50)
 			                .append("g")
 			                .attr("transform", "translate(10, 10)")
-			                .call(d3.bullet().height(35));
+			                .call(d3.bullet().width(330).height(25));
                     }
 
                 	return this.appendChild(td);
@@ -283,36 +276,7 @@
             var yAxis = d3.svg.axis()
                 .scale(y)
                 .orient("left");
-            /*
-            chart.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")")
-                .call(xAxis);
-            
-            chart.append("g")
-                .attr("class", "y axis")
-                .call(yAxis).append("text")
-                .attr("transform", "rotate(-90)")
-                .attr("y", 6)
-                .attr("dy", ".71em")
-                .style("text-anchor", "end")
-                .text(metricName);
-            
-            chart.selectAll(".bar")
-                .data(data)
-                .enter().append("rect")
-                .attr("class", "bar")
-                .attr("x", function(d) {
-                    return x(d.name);
-                })
-                .attr("y", function(d) {
-                    return y(d.value);
-                })
-                .attr("height", function(d) {
-                    return height - y(d.value);
-                })
-                .attr("width", x.rangeBand());       
-                */  
+    
 
 			console.log('Exiting render Function.');
 		};
