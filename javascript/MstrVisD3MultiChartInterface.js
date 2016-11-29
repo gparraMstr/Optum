@@ -28,10 +28,8 @@
 
 						var widgetValues = [];
 
-						$.each(node.values, function(index, value) {
-							if (index < 5) {
-								widgetValues.push(value.rv);
-							}
+						$.each(node.values.slice(0, 5), function(index, value) {
+							widgetValues.push(value.rv);
 						});
 
 						while(widgetValues.length < 5) {
@@ -40,10 +38,8 @@
 
 						newNode["values"][node.values[0].name] = widgetValues;
 
-						$.each(node.values, function(index, value) {
-							if (index >= 5) {
-								newNode["values"][value.name] = value.v;
-							}
+						$.each(node.values.slice(5), function(index, value) {
+							newNode["values"][value.name] = value.v;
 						});	
 
 						data["nodes"].push(newNode);
@@ -55,30 +51,23 @@
 				if (typeof nodes != 'undefined') {
 					var index = 0;
 
-					$.each(nodes, function(idx, node) {
+					var nodesFiltered = nodes.filter(function(node) {
+						return node.otp != -1;
+					});
+
+					$.each(nodesFiltered, function(idx, node) {
 						if (node.otp == 12) {
 							data.push(node);
 						} else {
 							index = idx;
-
-							if (node.otp == -1) {
-								index++;
-								data.push(nodes[index])
-
-							} else {
-								data.push(node);
-							}
-
+							data.push(node);
+							
 							return false;
 						}
 					});
 
-					index += 5;
-
-					$.each(nodes, function(idx, node) {
-						if (idx >= index) {
-							data.push(node);
-						}
+					$.each(nodesFiltered.slice(index + 5), function(idx, node) {
+						data.push(node);
 					});
 				}
 			};
@@ -243,21 +232,27 @@
                 		//d3.select(this.parentNode).append("td").text(d['html']);
                     	td.innerHTML = d['html'];
                     } else {
+                    	var svg = d3.bullet();
+                    	svg.height(25).width(350);
+
                     	d3.select(td).selectAll("svg")
-			                .data([{"title":"Revenue","subtitle":"US$, in thousands","ranges":[d['html'][0],d['html'][1],d['html'][2]],
-			                		"measures":[d['html'][3]],"markers":[d['html'][4]]}])
+			                .data([{"title":"Revenue","subtitle":"US$, in thousands","ranges":[d['html'][2],d['html'][3],d['html'][4]],
+			                		"measures":[d['html'][1]],"markers":[d['html'][0]]}])
 			                .enter().append("svg")
 			                .attr("class", "bullet")
-			                .attr("width", 350)
+			             	.attr("width", "100%")
 			                .attr("height", 50)
 			                .append("g")
-			                .attr("transform", "translate(10, 10)")
-			                .call(d3.bullet().width(330).height(25));
+			                .attr("transform", "translate(5, 10)")
+			                .call(svg);
                     }
 
                 	return this.appendChild(td);
                 })                
                 .attr('class', function(d) {
+                	if (typeof d['html'] == 'object') {
+                		return 'widget'
+                	}
                     return d['cl'];
                 });
 
