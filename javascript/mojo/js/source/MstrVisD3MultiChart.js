@@ -158,7 +158,7 @@
     mstrmojo.plugins.Optum.MstrVisD3MultiChart = mstrmojo.declare(
         //We need to declare that our code extends CustomVisBase
         mstrmojo.CustomVisBase,
-        null,
+        [ mstrmojo._HasSelector ],
         {
             //here scriptClass is defined as mstrmojo.plugins.{plugin name}.{js file name}
             scriptClass: 'mstrmojo.plugins.Optum.MstrVisD3MultiChart',

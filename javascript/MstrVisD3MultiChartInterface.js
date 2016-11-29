@@ -18,13 +18,29 @@
 					$.each(nodes, function(index, node) {
 						var newNode = {
 							"values": [],
-							"attributeSelector": []
+							"attributeSelector": null,
+							"attributeHeader": null,
+							"element": ''
 						};
 						
 						$.each(node.headers, function(index, header) {
 							newNode["values"][header.tname] = header.name;
-							newNode["attributeSelector"].push(header.attributeSelector);
+
+							newNode["element"] = header.name;
+							newNode["attributeSelector"] = header.attributeSelector;
+							newNode["attributeHeader"] = header;
 						});
+						/*
+						newNode["element"] = node["name"];
+						if (typeof (node["linkInfo"]) != "undefined") {
+							if (node["linkInfo"] != null && node["linkInfo"].length > 0) {
+								var target = node["linkInfo"][0]["links"][0]["target"];
+								newNode["editLinkTarget"] = target; // document
+							}
+						}
+						newNode["attributeSelector"] = node["attributeSelector"]; // attribute column object
+						newNode["attributeHeader"] = node["attributeHeader"]; 
+						*/
 
 						var widgetValues = [];
 
@@ -57,22 +73,22 @@
 
 					$.each(nodesFiltered, function(idx, node) {
 						if (node.otp == 12) {
-							data.push(node);
+							data["columns"].push(node);
 						} else {
 							index = idx;
-							data.push(node);
+							data["columns"].push(node);
 							
 							return false;
 						}
 					});
 
 					$.each(nodesFiltered.slice(index + 5), function(idx, node) {
-						data.push(node);
+						data["columns"].push(node);
 					});
 				}
 			};
 
-			var createLinks = function(node, data) {
+			var createLinks = function(nodes, data) {
 				if (typeof (node["children"]) != "undefined") {
 					for (key in node["children"]) {
 						var childNode = node["children"][key];
@@ -128,17 +144,16 @@
 			}
 
 			var data = {};
-			var columns = [];
 			
 			data["nodes"] = [];
 			data["links"] = [];
+			data["columns"] = [];
 
 			createNodes(rawGridData, data);
-			createColumns(gridData.getColumnHeaderData(), columns);
+			createColumns(gridData.getColumnHeaderData(), data);
 			//createLinks(rawGridData, data);
 
 			this.data = data;
-			this.columns = columns;
 			
 			console.log('Exiting transformData function.');
 		};
@@ -169,7 +184,7 @@
                  .rangeRoundBands([0, width], 0.1);
 
             var data = this.data.nodes; //this.visualization.dataInterface.getRawData(mstrmojo.models.template.DataInterface.ENUM_RAW_DATA_FORMAT.ROWS);
-            var columns = this.columns; //this.visualization.dataInterface.getColumnHeaderData();
+            var columns = this.data.columns; //this.visualization.dataInterface.getColumnHeaderData();
 
             var metricName = this.visualization.dataInterface.getColHeaders(0).getHeader(0).getName();
 
@@ -195,6 +210,8 @@
                     return d['n'];
                 });
 
+            visInterface = this;
+
             // create table body
             table.select('tbody')
                 //.attr("height", height - 80)
@@ -211,6 +228,10 @@
                             if ((c['otp'] == 12) && (typeof row.values[c['n']] == "string")) {
                                 cell['html'] = row.values[c['n']];
                                 cell['cl'] = 'title';
+
+                                cell["element"] = row['element'];
+								cell["attributeSelector"] = row['attributeSelector'];
+								cell["attributeHeader"] = row['attributeHeader'];
 
                                 cell['id'] = c['id'] + i;
                             } else {
@@ -247,8 +268,41 @@
 			                .call(svg);
                     }
 
+                  
                 	return this.appendChild(td);
-                })                
+                })
+                .on("click", function(d) {
+                    
+                    visInterface.applySelection(d); // dashboards
+					visInterface.makeSelection(d);
+
+                    var linkAction;
+
+					try {
+						linkAction = visInterface.visualization.model.getLinkActionImpl({}, d["attributeHeader"]);
+					} catch (err) {
+						return;
+					}
+					if (linkAction !== null) { // This code is for edit links only
+						if (d.element != "MISSING") {
+							var i = 0;
+							while (d["attributeHeader"].es[0].n != d.element) {
+								d["attributeHeader"].es.shift();
+							}
+							i = d["attributeHeader"].es.length - 1;
+							while (i > 0) {
+								if (d["attributeHeader"].es[i].n != d.element) {
+									d["attributeHeader"].es.pop();
+									i--;
+								}
+							}
+							var elementID = d["attributeHeader"].es[0].id.substring(1, d["attributeHeader"].es[0].id.indexOf(";"));
+							var attrID = d["attributeHeader"].es[0].id.substring(d["attributeHeader"].es[0].id.indexOf(";", 4) + 1, d["attributeHeader"].es[0].id.indexOf(";", 15));
+							var documentId = d["editLinkTarget"].did
+							window.open(window.location.href + "?evt=2048001&src=mstrWeb.2048001&src=mstrWeb.2048001&documentID=" + documentId + "&elementsPromptAnswers=" + attrID + ";" + attrID + ":" + elementID + "&originMessageID=" + mstrApp.getMsgID() + "&selectorMode=1", "_self"); // +"&visMode=0&currentViewMedia=1"
+						} // not MISSING
+					} // linkAction	
+                })
                 .attr('class', function(d) {
                 	if (typeof d['html'] == 'object') {
                 		return 'widget'

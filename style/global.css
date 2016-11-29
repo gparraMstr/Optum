@@ -61,7 +61,11 @@ style definitions for visualization - in this case empty
     cursor: pointer;
 }
 
-.custom-vis-layout.MstrVisD3MultiChart th { text-align: left; }
+.custom-vis-layout.MstrVisD3MultiChart th { 
+	text-align: left; 
+	font-size: 11px;
+}
+
 .custom-vis-layout.MstrVisD3MultiChart th, td { padding: 0 1em 0.5ex 0;}
 
 .custom-vis-layout.MstrVisD3MultiChart td.widget { padding: 0; min-width: 360px;}
