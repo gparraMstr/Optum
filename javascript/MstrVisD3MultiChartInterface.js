@@ -18,22 +18,33 @@
 			var createNodes = function(nodes, data) {
 				if (typeof nodes != 'undefined') {
 					$.each(nodes, function(index, node) {
+						var row = [];
+
+						$.each(node.headers, function(index, header) {
+							var newNode = {
+								"values": [],
+								"attributeSelector": null,
+								"attributeHeader": null,
+								"element": ''
+							};
+
+							newNode["values"] = header.name;
+
+							newNode["element"] = header.name;
+							newNode["attributeSelector"] = header.attributeSelector;
+
+							newNode["attributeKey"] = visInterface.getAttributeKey(newNode);
+							newNode["attributeHeader"] = visInterface.getAttributeHeader(newNode);
+
+							row[header.tname] = newNode;
+						});
+
 						var newNode = {
 							"values": [],
 							"attributeSelector": null,
 							"attributeHeader": null,
 							"element": ''
 						};
-						
-						$.each(node.headers, function(index, header) {
-							newNode["values"][header.tname] = header.name;
-
-							newNode["element"] = header.name;
-							newNode["attributeSelector"] = header.attributeSelector;
-
-							newNode["attributeKey"] = visInterface.getAttributeKey(newNode);
-							newNode["attributeHeader"] = visInterface.getAttributeHeader(newNode);;
-						});
 
 						var widgetValues = [];
 
@@ -42,20 +53,32 @@
 						});
 
 						while(widgetValues.length < 5) {
-							widgetValues.push(-1);
+							widgetValues.push(0);
 						}
 
-						newNode["values"][node.values[0].name] = widgetValues;
+						newNode["values"] = widgetValues;
+						row[node.values[0].name] = newNode;
+
 
 						$.each(node.values.slice(5), function(index, value) {
-							newNode["values"][value.name] = value.v;
+							var newNode = {
+								"values": '',
+								"attributeSelector": null,
+								"attributeHeader": null,
+								"element": ''
+							};
+
+							newNode["values"] = value.v;
+
+							row[value.name] = newNode;
 						});	
 
-						data["nodes"].push(newNode);
+						data["nodes"].push(row);
 					});
 				}
 			};
-		
+
+
 			var createColumns = function(nodes, data) {
 				if (typeof nodes != 'undefined') {
 					var index = 0;
@@ -217,18 +240,18 @@
                         // compute cell values for this specific row
                         var cell = {};
 
-                        if (typeof row.values[c['n']] != 'undefined') {
-                            if ((c['otp'] == 12) && (typeof row.values[c['n']] == "string")) {
-                                cell['html'] = row.values[c['n']];
+                        if (typeof row[c['n']] != 'undefined') {
+                            if (c['otp'] == 12) {
+                                cell['html'] = row[c['n']].values;
                                 cell['cl'] = 'title';
 
-                                cell["element"] = row['element'];
-								cell["attributeSelector"] = row['attributeSelector'];
-								cell["attributeHeader"] = row['attributeHeader'];
+                                cell["element"] = row[c['n']]['element'];
+								cell["attributeSelector"] = row[c['n']]['attributeSelector'];
+								cell["attributeHeader"] = row[c['n']]['attributeHeader'];
 
                                 cell['id'] = c['id'] + i;
                             } else {
-                                cell['html'] = row.values[c['n']];
+                                cell['html'] = row[c['n']].values;
                                 cell['cl'] = 'num';
 
                                 cell['id'] = c['oid'] + i;
@@ -270,38 +293,45 @@
                 })
                 .on("click", function(d) {
 
-                	var evt = d3.event;
+                	if ((typeof d.attributeHeader != 'undefined') &&
+                		(typeof d.attributeHeader.sc != 'undefined')) {
 
-                	var div = document.createElement("DIV");
-					div.style.position = "absolute";
+	                	var evt = d3.event;
 
-					// Version para Chrome
-					if (mstrmojo.dom.isWK) {
-						div.style.left = evt.layerX + "px";
-						div.style.top = evt.layerY + "px";
+	                	var div = document.createElement("DIV");
+						div.style.position = "absolute";
 
-					} else {
-						// Version para Firefox 37.0
-						div.style.left = evt.layerX - visInterface.visualization.domNode.scrollLeft + "px";
-						div.style.top = evt.layerY - visInterface.visualization.domNode.scrollTop + "px";
+						// Version para Chrome
+						if (mstrmojo.dom.isWK) {
+							div.style.left = evt.layerX + "px";
+							div.style.top = evt.layerY + "px";
 
-						// Version para Firefox 39.0
-						if (typeof fetch != undefined) {
-							var posXinfo = evt.pageX + "px";
-							var posYinfo = (evt.pageY - 110) + "px";
-							div.style.left = posXinfo;
-							div.style.top = posYinfo;
+						} else {
+							// Version para Firefox 37.0
+							div.style.left = evt.layerX - visInterface.visualization.domNode.scrollLeft + "px";
+							div.style.top = evt.layerY - visInterface.visualization.domNode.scrollTop + "px";
+
+							// Version para Firefox 39.0
+							if (typeof fetch != undefined) {
+								var posXinfo = evt.pageX + "px";
+								var posYinfo = (evt.pageY - 110) + "px";
+								div.style.left = posXinfo;
+								div.style.top = posYinfo;
+							}
 						}
+
+						visInterface.visualization.domNode.appendChild(div);
+
+						d.attributeHeader.sc.anchor = div;
+						
+	                    visInterface.applySelection(d); // dashboards
+						visInterface.makeSelection(d);
+
+						div.remove();
+
+						visInterface.visualization.clearSelections();
+						visInterface.visualization.endSelections();
 					}
-
-					visInterface.visualization.domNode.appendChild(div);
-
-					d.attributeHeader.sc.anchor = div;
-					
-                    visInterface.applySelection(d); // dashboards
-					visInterface.makeSelection(d);
-
-					div.remove();
 
 					return true;
                 })
