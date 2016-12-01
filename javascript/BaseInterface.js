@@ -40,7 +40,7 @@
 		}
 
 		// Now select the element
-		this.visualization.makeSelection(attElemId, node["attributeSelector"]);
+		this.visualization.makeSelection(attElemId, node["attributeHeader"]);
 	};
 	// dashboards
 	customVisInterface.BaseInterface.prototype.applySelection = function(node) {
@@ -65,7 +65,7 @@
 		return null;
 	};
 
-	customVisInterface.BaseInterface.prototype.getattributeHeader = function(node) {
+	customVisInterface.BaseInterface.prototype.getAttributeHeader = function(node) {
 		var key = node["attributeKey"];
 		if (key != null) {
 			var attributes = this.visualization.model.data.gts.row;
@@ -94,7 +94,7 @@
 		}
 		if (typeof (node["attributeSelector"]) != "undefined") {
 			node["attributeKey"] = this.getAttributeKey(node);
-			node["attributeHeader"] = this.getattributeHeader(node);
+			node["attributeHeader"] = this.getAttributeHeader(node);
 			node["linkInfo"] = this.getLinkInfo(node);
 		}
 		return total;

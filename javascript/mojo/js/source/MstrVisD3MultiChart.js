@@ -58,13 +58,13 @@
             var sc = dfm && dfm["sc"];
             if (sc != null) {
                 var dm = this.model.docModel;
-                if (typeof (sc["tks"]) != "undefined") {
-                    var ifws = dm.getTargetInfoWin(sc["tks"]);
-                    if (ifws && ifws.length) {
-                        for (var i = 0; i < ifws.length; i++) {
-                            dm.showInfoWin(ifws[i], sc.anchor, "h", true);
-                        }
-                    }
+                if (typeof (sc["ifw"]) != "undefined") {
+                    //var ifws = dm.getTargetInfoWin(sc["tks"]);
+                    //if (ifws && ifws.length) {
+                     //   for (var i = 0; i < ifws.length; i++) {
+                            dm.showInfoWin(sc["ifw"], sc.anchor, "h", true);
+                      //  }
+                    //}
                 }
             }
             var events = [];
@@ -73,7 +73,7 @@
                 // reset previous selections
                 for (var i = 0; i < scm.length; i++) {
                     if (scm[i].sc) {
-                        events.push(this.getEventForSelection(attElemId, scm[i], this.model));
+                        //events.push(this.getEventForSelection(attElemId, scm[i], this.model));
                         //events.push(this.getEventForSelection("u;;(All)", scm[i], this.model));
                         //events.push(this.getEventForSort(attElemId, scm[i], this.model));
                     }
@@ -192,7 +192,7 @@
             cssClass: "MstrVisD3MultiChart",
             errorDetails: "This visualization requires at least 1 metrics.",
             useRichTooltip: true,
-            reuseDOMNode: false,
+            reuseDOMNode: true,
             externalLibraries: [
                 {
                     url: "../plugins/Optum/javascript/d3.v3.min.js"              

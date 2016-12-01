@@ -13,6 +13,8 @@
 				hasTitleName: true
 			});
 
+			visInterface = this;
+
 			var createNodes = function(nodes, data) {
 				if (typeof nodes != 'undefined') {
 					$.each(nodes, function(index, node) {
@@ -28,19 +30,10 @@
 
 							newNode["element"] = header.name;
 							newNode["attributeSelector"] = header.attributeSelector;
-							newNode["attributeHeader"] = header;
+
+							newNode["attributeKey"] = visInterface.getAttributeKey(newNode);
+							newNode["attributeHeader"] = visInterface.getAttributeHeader(newNode);;
 						});
-						/*
-						newNode["element"] = node["name"];
-						if (typeof (node["linkInfo"]) != "undefined") {
-							if (node["linkInfo"] != null && node["linkInfo"].length > 0) {
-								var target = node["linkInfo"][0]["links"][0]["target"];
-								newNode["editLinkTarget"] = target; // document
-							}
-						}
-						newNode["attributeSelector"] = node["attributeSelector"]; // attribute column object
-						newNode["attributeHeader"] = node["attributeHeader"]; 
-						*/
 
 						var widgetValues = [];
 
@@ -267,40 +260,50 @@
 			                .attr("transform", "translate(5, 10)")
 			                .call(svg);
                     }
+
+                    $(td).on('click', function(evt) {
+                    	d3.event = evt;
+                    	return false;
+                    });
                   
                 	return td;
                 })
                 .on("click", function(d) {
 
+                	var evt = d3.event;
+
+                	var div = document.createElement("DIV");
+					div.style.position = "absolute";
+
+					// Version para Chrome
+					if (mstrmojo.dom.isWK) {
+						div.style.left = evt.layerX + "px";
+						div.style.top = evt.layerY + "px";
+
+					} else {
+						// Version para Firefox 37.0
+						div.style.left = evt.layerX - visInterface.visualization.domNode.scrollLeft + "px";
+						div.style.top = evt.layerY - visInterface.visualization.domNode.scrollTop + "px";
+
+						// Version para Firefox 39.0
+						if (typeof fetch != undefined) {
+							var posXinfo = evt.pageX + "px";
+							var posYinfo = (evt.pageY - 110) + "px";
+							div.style.left = posXinfo;
+							div.style.top = posYinfo;
+						}
+					}
+
+					visInterface.visualization.domNode.appendChild(div);
+
+					d.attributeHeader.sc.anchor = div;
+					
                     visInterface.applySelection(d); // dashboards
 					visInterface.makeSelection(d);
 
-                    var linkAction;
+					div.remove();
 
-					try {
-						linkAction = visInterface.visualization.model.getLinkActionImpl({}, gridData.getRowHeaders().titles[d['attributeHeader']]);
-					} catch (err) {
-						return;
-					}
-					if (linkAction !== null) { // This code is for edit links only
-						if (d.element != "MISSING") {
-							var i = 0;
-							while (d["attributeHeader"].es[0].n != d.element) {
-								d["attributeHeader"].es.shift();
-							}
-							i = d["attributeHeader"].es.length - 1;
-							while (i > 0) {
-								if (d["attributeHeader"].es[i].n != d.element) {
-									d["attributeHeader"].es.pop();
-									i--;
-								}
-							}
-							var elementID = d["attributeHeader"].es[0].id.substring(1, d["attributeHeader"].es[0].id.indexOf(";"));
-							var attrID = d["attributeHeader"].es[0].id.substring(d["attributeHeader"].es[0].id.indexOf(";", 4) + 1, d["attributeHeader"].es[0].id.indexOf(";", 15));
-							var documentId = d["editLinkTarget"].did
-							window.open(window.location.href + "?evt=2048001&src=mstrWeb.2048001&src=mstrWeb.2048001&documentID=" + documentId + "&elementsPromptAnswers=" + attrID + ";" + attrID + ":" + elementID + "&originMessageID=" + mstrApp.getMsgID() + "&selectorMode=1", "_self"); // +"&visMode=0&currentViewMedia=1"
-						} // not MISSING
-					} // linkAction	
+					return true;
                 })
                 .attr('class', function(d) {
                 	if (typeof d['html'] == 'object') {
