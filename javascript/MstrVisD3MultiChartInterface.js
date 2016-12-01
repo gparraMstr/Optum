@@ -4,6 +4,8 @@
 		
 		MstrVisD3MultiChart.prototype.transformData = function() {
 			console.log('Entering transformData function.');
+		
+			visInterface = this;
 			
 			// Get the DataInterface Object
 			gridData = this.visualization.dataInterface;
@@ -12,9 +14,7 @@
 				hasSelection : true,
 				hasTitleName: true
 			});
-
-			visInterface = this;
-
+			
 			var createNodes = function(nodes, data) {
 				if (typeof nodes != 'undefined') {
 					$.each(nodes, function(index, node) {
@@ -42,7 +42,7 @@
 						});
 
 						while(widgetValues.length < 5) {
-							widgetValues.push(0);
+							widgetValues.push(-1);
 						}
 
 						newNode["values"][node.values[0].name] = widgetValues;
@@ -55,7 +55,7 @@
 					});
 				}
 			};
-
+		
 			var createColumns = function(nodes, data) {
 				if (typeof nodes != 'undefined') {
 					var index = 0;
@@ -251,7 +251,7 @@
 
                     	d3.select(td).selectAll("svg")
 			                .data([{"title":"Revenue","subtitle":"US$, in thousands","ranges":[d['html'][2],d['html'][3],d['html'][4]],
-			                		"measures":[d['html'][1]],"markers":[d['html'][0]]}])
+			                		"measures":[d['html'][0]],"markers":[d['html'][1]]}])
 			                .enter().append("svg")
 			                .attr("class", "bullet")
 			             	.attr("width", "100%")
