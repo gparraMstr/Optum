@@ -30,7 +30,7 @@
             }
             if (!this.dfm) {
 
-                var ts = this.model.gts;
+                var ts = this.model.data.gts;
                 if (ts) {
                     var tts = (ts.row || []).concat(ts.col || []);
                     var i = 0, tCnt = 0, fCnt = 0, len = tts && tts.length, t = null, r = null;
@@ -73,7 +73,9 @@
                 // reset previous selections
                 for (var i = 0; i < scm.length; i++) {
                     if (scm[i].sc) {
-                        events.push(this.getEventForSelection("u;;(All)", scm[i], this.model));
+                        events.push(this.getEventForSelection(attElemId, scm[i], this.model));
+                        //events.push(this.getEventForSelection("u;;(All)", scm[i], this.model));
+                        //events.push(this.getEventForSort(attElemId, scm[i], this.model));
                     }
                 }
                 // make the selection of the new element
@@ -89,6 +91,30 @@
                 tks : (mstrmojo.hash.any(events) || {}).tks,
                 events : events
             });
+        },
+        getEventForSort : function(elementID, dfm, model) {
+            var m = model.data, sc = dfm && dfm["sc"];
+            if (sc != null) {
+                var result = {
+                    act: "updateTemplate",
+                    keyContext: "F45",
+                    actions: [{
+                        sorts: [
+                            [{
+                                key: elementID,
+                                isAsc: true
+                            }]
+                        ],
+                        stp: [4],
+                        subTotalsPos: [4],
+                        nodeKey: "F45",
+                        treeType: 1,
+                        act: "sort"
+                    }]
+                };
+                return result;
+            }
+            return null;
         },
         getEventForSelection : function(elementID, dfm, model) {
             var m = model.data, sc = dfm && dfm["sc"];
@@ -162,11 +188,11 @@
         {
             //here scriptClass is defined as mstrmojo.plugins.{plugin name}.{js file name}
             scriptClass: 'mstrmojo.plugins.Optum.MstrVisD3MultiChart',
-            model: null,
+          //  model: null,
             cssClass: "MstrVisD3MultiChart",
             errorDetails: "This visualization requires at least 1 metrics.",
             useRichTooltip: true,
-            reuseDOMNode: true,
+            reuseDOMNode: false,
             externalLibraries: [
                 {
                     url: "../plugins/Optum/javascript/d3.v3.min.js"              
@@ -187,13 +213,13 @@
             /**
             * Rendering Multichart using D3 JS framework for Optum project 
             */
-            plot: function () { 
+            plot: function () {
                 this.customVisInterface = new customVisInterface.MstrVisD3MultiChart(this);
             }
         });
 })();
 
-function fetch(d) { debugger;
+function fetch(d) {
     var i=0, l = functions.length;
     while (i++ < l) d = functions[i-1].call(this, d);
     return d;

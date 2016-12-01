@@ -267,19 +267,18 @@
 			                .attr("transform", "translate(5, 10)")
 			                .call(svg);
                     }
-
                   
-                	return this.appendChild(td);
+                	return td;
                 })
                 .on("click", function(d) {
-                    
+
                     visInterface.applySelection(d); // dashboards
 					visInterface.makeSelection(d);
 
                     var linkAction;
 
 					try {
-						linkAction = visInterface.visualization.model.getLinkActionImpl({}, d["attributeHeader"]);
+						linkAction = visInterface.visualization.model.getLinkActionImpl({}, gridData.getRowHeaders().titles[d['attributeHeader']]);
 					} catch (err) {
 						return;
 					}

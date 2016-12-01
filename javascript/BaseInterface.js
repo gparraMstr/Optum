@@ -40,7 +40,7 @@
 		}
 
 		// Now select the element
-		this.visualization.makeSelection(attElemId, node["attributeHeader"]);
+		this.visualization.makeSelection(attElemId, node["attributeSelector"]);
 	};
 	// dashboards
 	customVisInterface.BaseInterface.prototype.applySelection = function(node) {

@@ -2,9 +2,9 @@
   <!--NAMETORENDER - descriptive name of visualization, name will be render on list-->
   <!--MstrVisD3MultiChart - style name as defined in styleCatalog.xml-->
 <visualizations>
-  <visualization-list name="ajax">
+  <visualization-list name="ajax" show-in-web="true" view-mode="51">
     <!--Defining new visualization, with style defined in stylecatalog.xml and with is-mojo="true"-->
     <visualization id="MstrVisD3MultiChart" desc="D3 Multichart Visualization" is-mojo="true" scope="18" style-name="MstrVisD3MultiChart"
-    	attribute-minimum="0" metric-minimum="3"/>
+    	attribute-minimum="1" metric-minimum="3"/>
   </visualization-list>
 </visualizations>
