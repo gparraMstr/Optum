@@ -14,19 +14,25 @@
 				hasSelection : true,
 				hasTitleName: true
 			});
-			
+
+			var createNewNode = function() {
+				return {
+					"values": [],
+					"attributeSelector": null,
+					"attributeHeader": null,
+					"element": ''
+				};
+			};
+
 			var createNodes = function(nodes, data) {
 				if (typeof nodes != 'undefined') {
-					$.each(nodes, function(index, node) {
+					
+					nodes.forEach(function(node, index) {
 						var row = [];
 
-						$.each(node.headers, function(index, header) {
-							var newNode = {
-								"values": [],
-								"attributeSelector": null,
-								"attributeHeader": null,
-								"element": ''
-							};
+						//Process attribute columns
+						node.headers.forEach(function(header, index) {
+							var newNode = createNewNode();
 
 							newNode["values"] = header.name;
 
@@ -39,16 +45,13 @@
 							row[header.tname] = newNode;
 						});
 
-						var newNode = {
-							"values": [],
-							"attributeSelector": null,
-							"attributeHeader": null,
-							"element": ''
-						};
+						//Process metrics for Widget
+						//Take first 5 metrics that will be used in visualization
+						var newNode = createNewNode();
 
 						var widgetValues = [];
 
-						$.each(node.values.slice(0, 5), function(index, value) {
+						node.values.slice(0, 5).forEach(function(value, index) {
 							widgetValues.push(value.rv);
 						});
 
@@ -59,14 +62,10 @@
 						newNode["values"] = widgetValues;
 						row[node.values[0].name] = newNode;
 
-
-						$.each(node.values.slice(5), function(index, value) {
-							var newNode = {
-								"values": '',
-								"attributeSelector": null,
-								"attributeHeader": null,
-								"element": ''
-							};
+						//Process remaining metrics
+						//Add individual column for each one
+						node.values.slice(5).forEach(function(value, index) {
+							var newNode = createNewNode();
 
 							newNode["values"] = value.v;
 
@@ -87,45 +86,23 @@
 						return node.otp != -1;
 					});
 
-					$.each(nodesFiltered, function(idx, node) {
+					nodesFiltered.every(function(node, idx) {
 						if (node.otp == 12) {
 							data["columns"].push(node);
+
 						} else {
 							index = idx;
 							data["columns"].push(node);
 							
 							return false;
 						}
+
+						return true;
 					});
 
-					$.each(nodesFiltered.slice(index + 5), function(idx, node) {
+					nodesFiltered.slice(index + 5).forEach(function(node, index) {
 						data["columns"].push(node);
 					});
-				}
-			};
-
-			var createLinks = function(nodes, data) {
-				if (typeof (node["children"]) != "undefined") {
-					for (key in node["children"]) {
-						var childNode = node["children"][key];
-						if (typeof (node["attributeKey"]) != "undefined") {
-							var existingLink = data["links"].find(function(ele) {
-								var sameSource = ele["source"]["name"] == data["nodes"][node["sankeyNodeKey"]]["name"];
-								var sameTarget = ele["target"]["name"] == data["nodes"][childNode["sankeyNodeKey"]]["name"];
-								return sameSource && sameTarget;
-							});
-							if (existingLink != null) {
-								existingLink.value += childNode.value;
-							} else {
-								var newLink = {};
-								newLink["source"] = data["nodes"][node["sankeyNodeKey"]];
-								newLink["target"] = data["nodes"][childNode["sankeyNodeKey"]];
-								newLink["value"] = childNode.value;
-								data["links"].push(newLink);
-							}
-						}
-						createLinks(childNode, data);
-					}
 				}
 			};
 
@@ -159,15 +136,13 @@
 				return;
 			}
 
-			var data = {};
+			var data = {
+				nodes: [],
+				columns: []
+			};
 			
-			data["nodes"] = [];
-			data["links"] = [];
-			data["columns"] = [];
-
 			createNodes(rawGridData, data);
 			createColumns(gridData.getColumnHeaderData(), data);
-			//createLinks(rawGridData, data);
 
 			this.data = data;
 			
@@ -180,6 +155,9 @@
 
 			//...YOUR JS CODE...
             this.visualization.domNode.innerText = "Empty text";
+
+            //Pointer to visualization interface
+            visInterface = this;
 
             // Define this code as a plugin in the mstrmojo object
             if (!mstrmojo.plugins.Optum) {
@@ -199,15 +177,13 @@
             var x = d3.scale.ordinal()
                  .rangeRoundBands([0, width], 0.1);
 
-            var data = this.data.nodes; //this.visualization.dataInterface.getRawData(mstrmojo.models.template.DataInterface.ENUM_RAW_DATA_FORMAT.ROWS);
-            var columns = this.data.columns; //this.visualization.dataInterface.getColumnHeaderData();
+            var data = this.data.nodes; 
+            var columns = this.data.columns; 
 
-            var metricName = this.visualization.dataInterface.getColHeaders(0).getHeader(0).getName();
-
+            //Create D3 table
             var table = d3.select(this.visualization.domNode)
                 .append('table')
                 .attr('cellspacing', '0');
-
 
             // create table header
             table.append('colgroup').selectAll('col')
@@ -226,11 +202,8 @@
                     return d['n'];
                 });
 
-            visInterface = this;
-
             // create table body
             table.select('tbody')
-                //.attr("height", height - 80)
                 .selectAll('tr')
                 .data(data).enter()
                 .append('tr')
@@ -266,8 +239,7 @@
                 	td.setAttribute('id', d['id']);
 
                 	if (typeof d['html'] == 'string') {
-                		//d3.select(this.parentNode).append("td").text(d['html']);
-                    	td.innerHTML = d['html'];
+                		td.innerHTML = d['html'];
                     } else {
                     	var svg = d3.bullet();
                     	svg.height(25).width(350);
@@ -284,10 +256,11 @@
 			                .call(svg);
                     }
 
+
                     $(td).on('click', function(evt) {
                     	d3.event = evt;
                     	return false;
-                    });
+                    });                    
                   
                 	return td;
                 })
@@ -333,7 +306,7 @@
 						visInterface.visualization.endSelections();
 					}
 
-					return true;
+					return false;
                 })
                 .attr('class', function(d) {
                 	if (typeof d['html'] == 'object') {
