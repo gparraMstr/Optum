@@ -6,14 +6,6 @@
 			console.log('Entering transformData function.');
 		
 			visInterface = this;
-			
-			// Get the DataInterface Object
-			gridData = this.visualization.dataInterface;
-
-			var rawGridData = gridData.getRawData(mstrmojo.models.template.DataInterface.ENUM_RAW_DATA_FORMAT.ROWS_ADV, {
-				hasSelection : true,
-				hasTitleName: true
-			});
 
 			var createNewNode = function() {
 				return {
@@ -23,6 +15,15 @@
 					"element": ''
 				};
 			};
+			
+			// Get the DataInterface Object
+			gridData = this.visualization.dataInterface;
+
+			//Fetch MSTR raw data from Document/Dashboard
+			var rawGridData = gridData.getRawData(mstrmojo.models.template.DataInterface.ENUM_RAW_DATA_FORMAT.ROWS_ADV, {
+				hasSelection : true,
+				hasTitleName: true
+			});
 
 			var createNodes = function(nodes, data) {
 				if (typeof nodes != 'undefined') {

@@ -59,32 +59,26 @@
             
             var events = [];
             var scm = this.model.getSelectorControlMapInfo();
+
+            if (sc != null) {
+                var dm = this.model.docModel;
+                
+                if (typeof (sc["ifw"]) != "undefined") {
+                    dm.showInfoWin(sc["ifw"], sc.anchor, "h", true);
+                }
+            }
             
             if (dfm) {
                 // reset previous selections
                 for (var i = 0; i < scm.length; i++) {
                     if (scm[i].sc) {
-                        //events.push(this.getEventForSelection(attElemId, scm[i], this.model));
                         events.push(this.getEventForSelection("u;;(All)", scm[i], this.model));
-                        //events.push(this.getEventForSort(attElemId, scm[i], this.model));
                     }
                 }
                 // make the selection of the new element
                 events.push(this.getEventForSelection(attElemId, dfm, this.model));
                 if (events.length > 0) {
                     this.submitEvents(events);
-                }
-            }
-
-            if (sc != null) {
-                var dm = this.model.docModel;
-                if (typeof (sc["ifw"]) != "undefined") {
-                    //var ifws = dm.getTargetInfoWin(sc["tks"]);
-                    //if (ifws && ifws.length) {
-                     //   for (var i = 0; i < ifws.length; i++) {
-                            dm.showInfoWin(sc["ifw"], sc.anchor, "h", true);
-                      //  }
-                    //}
                 }
             }
         },
