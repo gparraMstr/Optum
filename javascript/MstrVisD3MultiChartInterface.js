@@ -195,7 +195,56 @@
             table.append('tbody').append('tr')
                 .selectAll('th')
                 .data(columns).enter()
-                .append('th')
+                .append(function(d) {
+                	var th = document.createElement("th");
+
+                	//Add jQuery ti release event so 
+                    //D3 can process it.
+                	$(th).on('click', function(evt) {
+                    	d3.event = evt;
+                    	return false;
+                    });                    
+                  
+                	return th;
+                })
+                .on("click", function(d) {
+                	var evt = d3.event;
+
+                	var div = document.createElement("DIV");
+					div.style.position = "absolute";
+
+					// Version para Chrome
+					if (mstrmojo.dom.isWK) {
+						div.style.left = evt.layerX + "px";
+						div.style.top = evt.layerY + "px";
+
+					} else {
+						// Version para Firefox 37.0
+						div.style.left = evt.layerX - visInterface.visualization.domNode.scrollLeft + "px";
+						div.style.top = evt.layerY - visInterface.visualization.domNode.scrollTop + "px";
+
+						// Version para Firefox 39.0
+						if (typeof fetch != undefined) {
+							var posXinfo = evt.pageX + "px";
+							var posYinfo = (evt.pageY - 110) + "px";
+							div.style.left = posXinfo;
+							div.style.top = posYinfo;
+						}
+					}
+
+					visInterface.visualization.domNode.appendChild(div);
+
+					//d.attributeHeader.sc.anchor = div;
+					
+
+					//visInterface.visualization.model.sort(d, true);
+
+                    //visInterface.applySelection(d); // dashboards
+					//visInterface.makeSelection(d);
+
+					//div.remove();
+
+                })
                 .attr('class', function(d) {
                     return (d['otp'] == 5 ? 'num':'title');
                 })
@@ -257,7 +306,8 @@
 			                .call(svg);
                     }
 
-
+                    //Add jQuery ti release event so 
+                    //D3 can process it.
                     $(td).on('click', function(evt) {
                     	d3.event = evt;
                     	return false;
@@ -298,7 +348,7 @@
 
 						d.attributeHeader.sc.anchor = div;
 						
-	                    visInterface.applySelection(d); // dashboards
+						visInterface.applySelection(d); // dashboards
 						visInterface.makeSelection(d);
 
 						div.remove();

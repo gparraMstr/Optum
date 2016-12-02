@@ -72,7 +72,7 @@
                 // reset previous selections
                 for (var i = 0; i < scm.length; i++) {
                     if (scm[i].sc) {
-                        events.push(this.getEventForSelection("u;;(All)", scm[i], this.model));
+                     //   events.push(this.getEventForSelection("u;;(All)", scm[i], this.model));
                     }
                 }
                 // make the selection of the new element
