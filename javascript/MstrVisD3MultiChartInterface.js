@@ -353,8 +353,7 @@
 
 						div.remove();
 
-						visInterface.visualization.clearSelections();
-						visInterface.visualization.endSelections();
+						visInterface.resetSelections();
 					}
 
 					return false;
