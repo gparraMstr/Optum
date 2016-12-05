@@ -295,8 +295,10 @@
                     	svg.height(25).width(350);
 
                     	d3.select(td).selectAll("svg")
-			                .data([{"title":"Revenue","subtitle":"US$, in thousands","ranges":[d['html'][2],d['html'][3],d['html'][4]],
-			                		"measures":[d['html'][0]],"markers":[d['html'][1]]}])
+			                .data([{"ranges":[d['html'][2],d['html'][3],d['html'][4]],
+			                		"measures":[d['html'][0]],
+			                		"markers":[d['html'][1]],
+			                		"thresholdReached":d['html'][0] > d['html'][1] ? true : false}])
 			                .enter().append("svg")
 			                .attr("class", "bullet")
 			             	.attr("width", "100%")

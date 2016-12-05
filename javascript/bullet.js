@@ -32,6 +32,8 @@ d3.bullet = function() {
           .domain([0, Infinity])
           .range(x1.range());
 
+      var thresholdReached = d.thresholdReached;
+
       // Stash the new scale.
       this.__chart__ = x1;
 
@@ -64,7 +66,7 @@ d3.bullet = function() {
           .data(measurez);
 
       measure.enter().append("rect")
-          .attr("class", function(d, i) { return "measure s" + i; })
+          .attr("class", function(d, i) { return "measure " + thresholdReached; })
           .attr("width", w0)
           .attr("height", height / 3)
           .attr("x", reverse ? x0 : 0)
@@ -102,57 +104,57 @@ d3.bullet = function() {
           .attr("x2", x1)
           .attr("y1", height / 6)
           .attr("y2", height * 5 / 6);
+//TODO Removed for now. If time permits, make this configurable
+      // // Compute the tick format.
+      // var format = tickFormat || x1.tickFormat(8);
 
-      // Compute the tick format.
-      var format = tickFormat || x1.tickFormat(8);
+      // // Update the tick groups.
+      // var tick = g.selectAll("g.tick")
+      //     .data(x1.ticks(8), function(d) {
+      //       return this.textContent || format(d);
+      //     });
 
-      // Update the tick groups.
-      var tick = g.selectAll("g.tick")
-          .data(x1.ticks(8), function(d) {
-            return this.textContent || format(d);
-          });
+      // // Initialize the ticks with the old scale, x0.
+      // var tickEnter = tick.enter().append("g")
+      //     .attr("class", "tick")
+      //     .attr("transform", bulletTranslate(x0))
+      //     .style("opacity", 1e-6);
 
-      // Initialize the ticks with the old scale, x0.
-      var tickEnter = tick.enter().append("g")
-          .attr("class", "tick")
-          .attr("transform", bulletTranslate(x0))
-          .style("opacity", 1e-6);
+      // tickEnter.append("line")
+      //     .attr("y1", height)
+      //     .attr("y2", height * 7 / 6);
 
-      tickEnter.append("line")
-          .attr("y1", height)
-          .attr("y2", height * 7 / 6);
+      // tickEnter.append("text")
+      //     .attr("text-anchor", "middle")
+      //     .attr("dy", "1em")
+      //     .attr("y", height * 7 / 6)
+      //     .text(format);
 
-      tickEnter.append("text")
-          .attr("text-anchor", "middle")
-          .attr("dy", "1em")
-          .attr("y", height * 7 / 6)
-          .text(format);
+      // // Transition the entering ticks to the new scale, x1.
+      // tickEnter.transition()
+      //     .duration(duration)
+      //     .attr("transform", bulletTranslate(x1))
+      //     .style("opacity", 1);
 
-      // Transition the entering ticks to the new scale, x1.
-      tickEnter.transition()
-          .duration(duration)
-          .attr("transform", bulletTranslate(x1))
-          .style("opacity", 1);
+      // // Transition the updating ticks to the new scale, x1.
+      // var tickUpdate = tick.transition()
+      //     .duration(duration)
+      //     .attr("transform", bulletTranslate(x1))
+      //     .style("opacity", 1);
 
-      // Transition the updating ticks to the new scale, x1.
-      var tickUpdate = tick.transition()
-          .duration(duration)
-          .attr("transform", bulletTranslate(x1))
-          .style("opacity", 1);
+      // tickUpdate.select("line")
+      //     .attr("y1", height)
+      //     .attr("y2", height * 7 / 6);
 
-      tickUpdate.select("line")
-          .attr("y1", height)
-          .attr("y2", height * 7 / 6);
+      // tickUpdate.select("text")
+      //     .attr("y", height * 7 / 6);
 
-      tickUpdate.select("text")
-          .attr("y", height * 7 / 6);
-
-      // Transition the exiting ticks to the new scale, x1.
-      tick.exit().transition()
-          .duration(duration)
-          .attr("transform", bulletTranslate(x1))
-          .style("opacity", 1e-6)
-          .remove();
+      // // Transition the exiting ticks to the new scale, x1.
+      // tick.exit().transition()
+      //     .duration(duration)
+      //     .attr("transform", bulletTranslate(x1))
+      //     .style("opacity", 1e-6)
+      //     .remove();
     });
     d3.timer.flush();
   }
@@ -186,6 +188,12 @@ d3.bullet = function() {
     return bullet;
   };
 
+  bullet.thresholdReached = function(x) {
+    if (!arguments.length) return thresholdReached;
+    thresholdReached = x;
+    return bullet;
+  };
+
   bullet.width = function(x) {
     if (!arguments.length) return width;
     width = x;
@@ -198,11 +206,11 @@ d3.bullet = function() {
     return bullet;
   };
 
-  bullet.tickFormat = function(x) {
-    if (!arguments.length) return tickFormat;
-    tickFormat = x;
-    return bullet;
-  };
+  // bullet.tickFormat = function(x) {
+  //   if (!arguments.length) return tickFormat;
+  //   tickFormat = x;
+  //   return bullet;
+  // };
 
   bullet.duration = function(x) {
     if (!arguments.length) return duration;
