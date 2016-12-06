@@ -31,13 +31,13 @@ style definitions for visualization - in this case empty
 }
 
 .custom-vis-layout.MstrVisD3MultiChart .bullet { font: 10px sans-serif; }
-.custom-vis-layout.MstrVisD3MultiChart .bullet .marker { stroke: lightsteelblue; stroke-width: 2px; }
+.custom-vis-layout.MstrVisD3MultiChart .bullet .marker { stroke: #88AE57; stroke-width: 3px; }
 .custom-vis-layout.MstrVisD3MultiChart .bullet .tick line { stroke: #666; stroke-width: .5px; }
-.custom-vis-layout.MstrVisD3MultiChart .bullet .range.s0 { fill: #eee; }
-.custom-vis-layout.MstrVisD3MultiChart .bullet .range.s1 { fill: #ddd; }
-.custom-vis-layout.MstrVisD3MultiChart .bullet .range.s2 { fill: #ccc; }
-.custom-vis-layout.MstrVisD3MultiChart .bullet .measure.true { fill: lightsteelblue; }
-.custom-vis-layout.MstrVisD3MultiChart .bullet .measure.false { fill: steelblue; }
+.custom-vis-layout.MstrVisD3MultiChart .bullet .range.s0 { fill: #D0D1D1; }
+.custom-vis-layout.MstrVisD3MultiChart .bullet .range.s1 { fill: #C1C2C2; }
+.custom-vis-layout.MstrVisD3MultiChart .bullet .range.s2 { fill: #B1B3B3; }
+.custom-vis-layout.MstrVisD3MultiChart .bullet .measure.true { fill: #90BC53; }
+.custom-vis-layout.MstrVisD3MultiChart .bullet .measure.false { fill: #D13F44; }
 .custom-vis-layout.MstrVisD3MultiChart .bullet .title { font-size: 14px; font-weight: bold; }
 .custom-vis-layout.MstrVisD3MultiChart .bullet .subtitle { fill: #999; }
 
@@ -52,7 +52,6 @@ style definitions for visualization - in this case empty
     width: 100%;
 
     vertical-align: top;
-    white-space: nowrap;
     writing-mode: lr-tb;
 }
 
@@ -73,7 +72,7 @@ style definitions for visualization - in this case empty
 
 .custom-vis-layout.MstrVisD3MultiChart th, td { padding: 0 1em 0.5ex 0;}
 
-.custom-vis-layout.MstrVisD3MultiChart td.widget { padding: 0; min-width: 360px;}
+.custom-vis-layout.MstrVisD3MultiChart td.widget { padding: 0; min-width: 400px;}
 
 .custom-vis-layout.MstrVisD3MultiChart th.center, td.center { text-align: center; }
 .custom-vis-layout.MstrVisD3MultiChart th.num, td.num { text-align: center; }
