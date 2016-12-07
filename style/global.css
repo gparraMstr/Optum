@@ -68,6 +68,7 @@ style definitions for visualization - in this case empty
 .custom-vis-layout.MstrVisD3MultiChart th { 
 	text-align: left; 
 	font-size: 11px;
+    white-space: nowrap;
 }
 
 .custom-vis-layout.MstrVisD3MultiChart th, td { padding: 0 1em 0.5ex 0;}
@@ -76,3 +77,4 @@ style definitions for visualization - in this case empty
 
 .custom-vis-layout.MstrVisD3MultiChart th.center, td.center { text-align: center; }
 .custom-vis-layout.MstrVisD3MultiChart th.num, td.num { text-align: center; }
+

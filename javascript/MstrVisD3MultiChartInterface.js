@@ -191,8 +191,9 @@
             	.data(columns).enter()
                 .append('col');
 
+
             // create table header
-            table.append('tbody').append('tr')
+            var headers = table.append('tbody').append('tr')
                 .selectAll('th')
                 .data(columns).enter()
                 .append(function(d) {
@@ -207,57 +208,65 @@
                   
                 	return th;
                 })
-                .on("click", function(d) {
-                	var evt = d3.event;
-
-                	var div = document.createElement("DIV");
-					div.style.position = "absolute";
-
-					// Version para Chrome
-					if (mstrmojo.dom.isWK) {
-						div.style.left = evt.layerX + "px";
-						div.style.top = evt.layerY + "px";
-
-					} else {
-						// Version para Firefox 37.0
-						div.style.left = evt.layerX - visInterface.visualization.domNode.scrollLeft + "px";
-						div.style.top = evt.layerY - visInterface.visualization.domNode.scrollTop + "px";
-
-						// Version para Firefox 39.0
-						if (typeof fetch != undefined) {
-							var posXinfo = evt.pageX + "px";
-							var posYinfo = (evt.pageY - 110) + "px";
-							div.style.left = posXinfo;
-							div.style.top = posYinfo;
-						}
-					}
-
-					visInterface.visualization.domNode.appendChild(div);
-
-					//d.attributeHeader.sc.anchor = div;
-					
-
-					//visInterface.visualization.model.sort(d, true);
-
-                    //visInterface.applySelection(d); // dashboards
-					//visInterface.makeSelection(d);
-
-					//div.remove();
-
-                })
                 .attr('class', function(d) {
                     return (d['otp'] == 5 ? 'num':'title');
                 })
                 .text(function(d) {
                     return d['n'];
-                });
+				});
+
+            //TODO: Cleanup duplicate code
+            headers.append('input').attr('type', 'button').attr('value', '\u25b2')
+            	.on("click", function(d){
+	            	//determine sort key (different for attributes and metrics)
+					var isAttributeColumn = d['otp'] == 12 ? true : false;
+	            	if (isAttributeColumn){
+	            		var sortKey = [ d['otp'], d['id'], d['fid'], "21", "", "1"];
+	            	} else {
+	            		var sortKey = [ d['otp'], d['oid'], "", "", "", "1"];
+	            	}
+					sortKey = sortKey.join("!");
+
+					//Retrieve ID
+					var id = $(this).closest("div").attr("id");
+					document.visualization = mstrmojo.all[id];
+					var axisSorts = [], sorts= [];
+					axisSorts.push({
+						key : sortKey, //sortKey
+						isAsc : true 
+					});
+					sorts.push(axisSorts);
+					document.visualization.parent.controller.onAdvancedSort(document.visualization, sorts, null, null, 1);
+            	});
+            headers.append('input').attr('type', 'button').attr('value', '\u25bc')
+            	.on("click", function(d){
+	            	//determine sort key (different for attributes and metrics)
+					var isAttributeColumn = d['otp'] == 12 ? true : false;
+	            	if (isAttributeColumn){
+	            		var sortKey = [ d['otp'], d['id'], d['fid'], "21", "", "1"];
+	            	} else {
+	            		var sortKey = [ d['otp'], d['oid'], "", "", "", "1"];
+	            	}
+					sortKey = sortKey.join("!");
+
+					//Retrieve ID
+					var id = $(this).closest("div").attr("id");
+					document.visualization = mstrmojo.all[id];
+					var axisSorts = [], sorts= [];
+					axisSorts.push({
+						key : sortKey, //sortKey
+						isAsc : false 
+					});
+					sorts.push(axisSorts);
+					document.visualization.parent.controller.onAdvancedSort(document.visualization, sorts, null, null, 1);
+            	});
 
             // create table body
-            table.select('tbody')
+            var rows = table.select('tbody')
                 .selectAll('tr')
                 .data(data).enter()
-                .append('tr')
-                .selectAll('td')
+                .append('tr');
+            rows.selectAll('td')
                 .data(function(row, i) {
                     return columns.map(function(c) {
                         // compute cell values for this specific row
