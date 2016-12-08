@@ -301,7 +301,7 @@
                 		td.innerHTML = d['html'];
                     } else {
                     	var svg = d3.bullet();
-                    	svg.height(25).width(350);
+                    	svg.height(20).width(250);
 
                     	d3.select(td).selectAll("svg")
 			                .data([{"ranges":[d['html'][2],d['html'][3],d['html'][4]],
