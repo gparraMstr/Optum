@@ -333,38 +333,38 @@
 
 	                	var evt = d3.event;
 
-	                	var div = document.createElement("DIV");
-						div.style.position = "absolute";
+	                	//var div = document.createElement("DIV");
+						//div.style.position = "absolute";
 
-						// Version para Chrome
-						if (mstrmojo.dom.isWK) {
-							div.style.left = evt.layerX + "px";
-							div.style.top = evt.layerY + "px";
+						// // Version para Chrome
+						// if (mstrmojo.dom.isWK) {
+						// 	div.style.left = evt.layerX + "px";
+						// 	div.style.top = evt.layerY + "px";
 
-						} else {
-							// Version para Firefox 37.0
-							div.style.left = evt.layerX - visInterface.visualization.domNode.scrollLeft + "px";
-							div.style.top = evt.layerY - visInterface.visualization.domNode.scrollTop + "px";
+						// } else {
+						// 	// Version para Firefox 37.0
+						// 	div.style.left = evt.layerX - visInterface.visualization.domNode.scrollLeft + "px";
+						// 	div.style.top = evt.layerY - visInterface.visualization.domNode.scrollTop + "px";
 
-							// Version para Firefox 39.0
-							if (typeof fetch != undefined) {
-								var posXinfo = evt.pageX + "px";
-								var posYinfo = (evt.pageY - 110) + "px";
-								div.style.left = posXinfo;
-								div.style.top = posYinfo;
-							}
-						}
+						// 	// Version para Firefox 39.0
+						// 	if (typeof fetch != undefined) {
+						// 		var posXinfo = evt.pageX + "px";
+						// 		var posYinfo = (evt.pageY - 110) + "px";
+						// 		div.style.left = posXinfo;
+						// 		div.style.top = posYinfo;
+						// 	}
+						// }
 
-						visInterface.visualization.domNode.appendChild(div);
+						//visInterface.visualization.domNode.appendChild(div);
 
-						d.attributeHeader.sc.anchor = div;
+						//d.attributeHeader.sc.anchor = div;
 						
 						visInterface.applySelection(d); // dashboards
 						visInterface.makeSelection(d);
 
-						div.remove();
+						//div.remove();
 
-						visInterface.resetSelections();
+						//visInterface.resetSelections();
 					}
 
 					return false;
