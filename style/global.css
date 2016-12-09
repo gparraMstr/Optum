@@ -46,7 +46,7 @@ style definitions for visualization - in this case empty
 	font-family: 'Helvetica', Helvetica; 
 	font-weight: 300; 
 	padding: 1px;
-
+    font-size: 7pt;
 
 	table-layout: auto;
     width: 100%;
