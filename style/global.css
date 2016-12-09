@@ -43,7 +43,7 @@ style definitions for visualization - in this case empty
 
 
 .custom-vis-layout.MstrVisD3MultiChart table { 
-	font-family: 'Helvetica Neue', Helvetica; 
+	font-family: 'Helvetica', Helvetica; 
 	font-weight: 300; 
 	padding: 1px;
 
@@ -67,7 +67,10 @@ style definitions for visualization - in this case empty
 
 .custom-vis-layout.MstrVisD3MultiChart th { 
 	text-align: left; 
-	font-size: 11px;
+	font-size: 7pt;
+    font-weight: bold;
+    color: #888D8D;
+    text-transform: uppercase;
     white-space: nowrap;
 }
 
