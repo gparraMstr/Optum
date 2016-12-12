@@ -189,7 +189,10 @@
             // create table header
             table.append('colgroup').selectAll('col')
             	.data(columns).enter()
-                .append('col');
+                .append('col')
+                .attr('class', function(d, i){
+                	return i;
+                });
 
 
             // create table header
@@ -215,51 +218,69 @@
                     return d['n'];
 				});
 
-            //TODO: Cleanup duplicate code
-            headers.append('input').attr('type', 'button').attr('value', '\u25b2')
+			var dropdown = headers.append('input')
+				.attr('type', 'button')
+				.attr('value', "...")
+				.attr('class', 'dropdown-button')
             	.on("click", function(d){
-	            	//determine sort key (different for attributes and metrics)
-					var isAttributeColumn = d['otp'] == 12 ? true : false;
-	            	if (isAttributeColumn){
-	            		var sortKey = [ d['otp'], d['id'], d['fid'], "21", "", "1"];
-	            	} else {
-	            		var sortKey = [ d['otp'], d['oid'], "", "", "", "1"];
-	            	}
-					sortKey = sortKey.join("!");
-
-					//Retrieve ID
-					var id = $(this).closest("div").attr("id");
-					document.visualization = mstrmojo.all[id];
-					var axisSorts = [], sorts= [];
-					axisSorts.push({
-						key : sortKey, //sortKey
-						isAsc : true 
-					});
-					sorts.push(axisSorts);
-					document.visualization.parent.controller.onAdvancedSort(document.visualization, sorts, null, null, 1);
+					var dropdownMenu = $(this).next();
+					dropdownMenu[0].classList.toggle("show");
             	});
-            headers.append('input').attr('type', 'button').attr('value', '\u25bc')
+
+            var dropDownContent = headers.append('div')
+            	.attr('class', 'dropdown-content');
+
+            var sortColumn = function(target, data, sortAsc){
+        		//determine sort key (different for attributes and metrics)
+				var isAttributeColumn = data['otp'] == 12 ? true : false;
+            	if (isAttributeColumn){
+            		var sortKey = [ data['otp'], data['id'], data['fid'], "21", "", "1"];
+            	} else {
+            		var sortKey = [ data['otp'], data['oid'], "", "", "", "1"];
+            	}
+				sortKey = sortKey.join("!");
+
+				//Retrieve ID
+				var id = $(target).closest('table').closest('div').attr("id");
+				document.visualization = mstrmojo.all[id];
+				var axisSorts = [], sorts= [];
+				axisSorts.push({
+					key : sortKey, //sortKey
+					isAsc : sortAsc 
+				});
+				sorts.push(axisSorts);
+				document.visualization.parent.controller.onAdvancedSort(document.visualization, sorts, null, null, 1);
+            };
+
+            dropDownContent.append('a').attr('href', 'javascript:void(0)')
             	.on("click", function(d){
-	            	//determine sort key (different for attributes and metrics)
-					var isAttributeColumn = d['otp'] == 12 ? true : false;
-	            	if (isAttributeColumn){
-	            		var sortKey = [ d['otp'], d['id'], d['fid'], "21", "", "1"];
-	            	} else {
-	            		var sortKey = [ d['otp'], d['oid'], "", "", "", "1"];
-	            	}
-					sortKey = sortKey.join("!");
+            		sortColumn(this, d, true);
+            	})
+            	.text('Sort Ascending');
 
-					//Retrieve ID
-					var id = $(this).closest("div").attr("id");
-					document.visualization = mstrmojo.all[id];
-					var axisSorts = [], sorts= [];
-					axisSorts.push({
-						key : sortKey, //sortKey
-						isAsc : false 
+            dropDownContent.append('a').attr('href', 'javascript:void(0)')
+            	.on("click", function(d){
+	            	sortColumn(this, d, false);
+            	})
+            	.text('Sort Descending');
+
+            dropDownContent.append('a').attr('href', 'javascript:void(0)')
+            	.on("click", function(d, i){
+
+	            	var tbl = $(this).closest('table');
+					var col = i + 1;
+
+					tblHeader = tbl[0].querySelectorAll('th:nth-child('+col+')');
+					tblHeader.forEach(function(cell) { // iterate and hide
+					    cell.style.display = 'none';
 					});
-					sorts.push(axisSorts);
-					document.visualization.parent.controller.onAdvancedSort(document.visualization, sorts, null, null, 1);
-            	});
+
+					tblRows = tbl[0].querySelectorAll('td:nth-child('+col+')');
+					tblRows.forEach(function(cell) { // iterate and hide
+					    cell.style.display = 'none';
+					});
+            	})
+            	.text('Hide Column');
 
             // create table body
             var rows = table.select('tbody')
@@ -301,7 +322,7 @@
                 		td.innerHTML = d['html'];
                     } else {
                     	var svg = d3.bullet();
-                    	svg.height(20).width(250);
+                    	svg.height(20).width(150);
 
                     	d3.select(td).selectAll("svg")
 			                .data([{"ranges":[d['html'][2],d['html'][3],d['html'][4]],
@@ -310,8 +331,8 @@
 			                		"thresholdReached":d['html'][0] > d['html'][1] ? true : false}])
 			                .enter().append("svg")
 			                .attr("class", "bullet")
-			             	.attr("width", "100%")
-			                .attr("height", 50)
+			             	.attr("width", 160)
+			                .attr("height", 40)
 			                .append("g")
 			                .attr("transform", "translate(5, 10)")
 			                .call(svg);
@@ -376,6 +397,7 @@
                     return d['cl'];
                 });
 
+
             x.domain(data.map(function(d) {
                 return d.name;
             }));
@@ -402,3 +424,18 @@
 		return MstrVisD3MultiChart;
 	})();
 })();
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropdown-button')) {
+
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
