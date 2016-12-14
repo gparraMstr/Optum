@@ -71,15 +71,23 @@ style definitions for visualization - in this case empty
     font-weight: bold;
     color: #888D8D;
     text-transform: uppercase;
-    white-space: nowrap;
 }
 
-.custom-vis-layout.MstrVisD3MultiChart th, td { padding: 0 1em 0.5ex 0;}
+.custom-vis-layout.MstrVisD3MultiChart th, td { 
+    padding: 0 1em 0.5ex 0;
+}
+
+.custom-vis-layout.MstrVisD3MultiChart tr.selected-row { background-color: #ddd}
 
 .custom-vis-layout.MstrVisD3MultiChart td.widget { padding: 0;}
 
+.custom-vis-layout.MstrVisD3MultiChart th.widget { text-align: center;}
+
 .custom-vis-layout.MstrVisD3MultiChart th.center, td.center { text-align: center; }
-.custom-vis-layout.MstrVisD3MultiChart th.num, td.num { text-align: center; }
+.custom-vis-layout.MstrVisD3MultiChart th.num, td.num { 
+    text-align: right;  
+    min-width: 100px;
+}
 
 .custom-vis-layout.MstrVisD3MultiChart th .dropdown-button { 
     display: none;
