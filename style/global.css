@@ -81,12 +81,11 @@ style definitions for visualization - in this case empty
 
 .custom-vis-layout.MstrVisD3MultiChart td.widget { padding: 0;}
 
-.custom-vis-layout.MstrVisD3MultiChart th.widget { text-align: center;}
+.custom-vis-layout.MstrVisD3MultiChart th.widget { text-align: left;}
 
 .custom-vis-layout.MstrVisD3MultiChart th.center, td.center { text-align: center; }
 .custom-vis-layout.MstrVisD3MultiChart th.num, td.num { 
     text-align: right;  
-    min-width: 100px;
 }
 
 .custom-vis-layout.MstrVisD3MultiChart th .dropdown-button { 

@@ -184,6 +184,8 @@
 				.rangeRoundBands([0, width], 0.1);
 
 			var data = this.data.nodes;
+			// TODO: Figure out why the first row doesn't display without this hack....
+			data.unshift({}); 
 			var columns = this.data.columns;
 
 			//Create D3 table
@@ -347,7 +349,7 @@
 							.attr("width", 160)
 							.attr("height", 40)
 							.append("g")
-							.attr("transform", "translate(5, 10)")
+							.attr("transform", "translate(0, 10)")
 							.call(svg);
 					}
 
