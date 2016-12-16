@@ -282,7 +282,6 @@
 				.on("click", function(d, i) {
 					var tbl = $(this).closest('table');
 					var col = i + 1;
-
 					tblHeader = tbl[0].querySelectorAll('th:nth-child(' + col + ')');
 					tblHeader.forEach(function(cell) { // iterate and hide
 						cell.style.display = 'none';
@@ -292,6 +291,15 @@
 					tblRows.forEach(function(cell) { // iterate and hide
 						cell.style.display = 'none';
 					});
+					document.visualization = mstrmojo.all[visInterface.visualization.id];
+					var action = document.visualization.model.getColumnResizeAction(d.id, d.otp, 0, 1, false);
+					document.visualization.controller.onXtabColumnsResized(document.visualization, action);
+					// document.visualization.model.resizeXtabColumn(
+					// 	document.visualization.model.getColumnResizeAction(d.id, d.otp, 0, 1, true) 
+					// 	//document.visualization.parent.controller._getXtabCallback(document.visualization)
+					// );
+
+
 				})
 				.text('Hide Column');
 
@@ -327,7 +335,7 @@
 						return cell;
 					});
 				}).enter()
-				.append(function(d) {
+				.append(function(d, i) {
 					var td = document.createElement("td");
 					td.setAttribute('id', d['id']);
 
@@ -360,6 +368,18 @@
 						return false;
 					});
 
+
+					if (this.rowIndex == 1 && typeof d.attributeHeader != 'undefined'&& typeof d.attributeHeader.sc != 'undefined'){
+						//force selection of first row 
+						visInterface.applySelection(d); // dashboards
+						visInterface.makeSelection(d);
+
+						var selected = this.classList.contains("selected-row");
+
+						mstrmojo.css.toggleClass(this, "selected-row", !selected);
+
+					}
+					
 					return td;
 				})
 				.on("click", function(d) {
@@ -368,10 +388,8 @@
 						row.classList.remove("selected-row");
 					});
 
-
 					if ((typeof d.attributeHeader != 'undefined') &&
 						(typeof d.attributeHeader.sc != 'undefined')) {
-
 						var evt = d3.event;
 
 						//var div = document.createElement("DIV");
@@ -403,8 +421,12 @@
 						visInterface.applySelection(d); // dashboards
 						visInterface.makeSelection(d);
 
-						var row = $(this).closest('tr');
-						row[0].className += "selected-row";
+						var selected = document.getElementById(d.id).parentElement.classList.contains("selected-row");
+
+						mstrmojo.css.toggleClass(document.getElementById(d.id).parentElement, "selected-row", !selected);
+
+						//var row = $(this).closest('tr');
+						//row[0].className += "selected-row";
 
 						//div.remove();
 

@@ -5,6 +5,6 @@
   <visualization-list name="ajax" show-in-web="true" view-mode="51">
     <!--Defining new visualization, with style defined in stylecatalog.xml and with is-mojo="true"-->
     <visualization id="MstrVisD3MultiChart" desc="D3 Multichart Visualization" is-mojo="true" scope="18" style-name="MstrVisD3MultiChart"
-    	attribute-minimum="1" metric-minimum="3"/>
+    	attribute-minimum="1" metric-minimum="3" />
   </visualization-list>
 </visualizations>

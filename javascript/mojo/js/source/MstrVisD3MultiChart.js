@@ -56,23 +56,24 @@
          */
         makeSelection : function(attElemId, dfm) {
             var sc = dfm && dfm["sc"];
-            
-            var events = [];
-            var scm = this.model.getSelectorControlMapInfo();
-
             if (sc != null) {
                 var dm = this.model.docModel;
-                
-                if (typeof (sc["ifw"]) != "undefined") {
-                    dm.showInfoWin(sc["ifw"], sc.anchor, "h", true);
+                if (typeof (sc["tks"]) != "undefined") {
+                    var ifws = dm.getTargetInfoWin(sc["tks"]);
+                    if (ifws && ifws.length) {
+                        for (var i = 0; i < ifws.length; i++) {
+                            dm.showInfoWin(ifws[i], sc.anchor, "h", true);
+                        }
+                    }
                 }
             }
-            
+            var events = [];
+            var scm = this.model.getSelectorControlMapInfo();
             if (dfm) {
                 // reset previous selections
                 for (var i = 0; i < scm.length; i++) {
                     if (scm[i].sc) {
-                     //   events.push(this.getEventForSelection("u;;(All)", scm[i], this.model));
+                        events.push(this.getEventForSelection("u;;(All)", scm[i], this.model));
                     }
                 }
                 // make the selection of the new element
@@ -180,6 +181,7 @@
     // Declaration of the visualization object
     mstrmojo.plugins.Optum.MstrVisD3MultiChart = mstrmojo.declare(
         //We need to declare that our code extends CustomVisBase
+        
         mstrmojo.CustomVisBase,
         [ mstrmojo._HasSelector ],
         {
