@@ -42,7 +42,7 @@
 
 							newNode["attributeKey"] = visInterface.getAttributeKey(newNode);
 							newNode["attributeHeader"] = visInterface.getAttributeHeader(newNode);
-
+							newNode["linkInfo"] = visInterface.getLinkInfo(newNode);
 							row[header.tname] = newNode;
 						});
 
@@ -432,6 +432,30 @@
 
 						//visInterface.resetSelections();
 					}
+
+					var linkAction;
+					try {
+						linkAction = visInterface.visualization.model.getLinkActionImpl({}, d["attributeHeader"], 0);
+					} catch (err) {
+						return;
+					}
+					if (linkAction !== null) { // This code is for edit links only
+						var i = 0;
+						while (d["attributeHeader"].es[0].n != d.element) {
+							d["attributeHeader"].es.shift();
+						}
+						i = d["attributeHeader"].es.length - 1;
+						while (i > 0) {
+							if (d["attributeHeader"].es[i].n != d.element) {
+								d["attributeHeader"].es.pop();
+								i--;
+							}
+						}
+						var elementID = d["attributeHeader"].es[0].id.substring(1, d["attributeHeader"].es[0].id.indexOf(";"));
+						var attrID = d["attributeHeader"].es[0].id.substring(d["attributeHeader"].es[0].id.indexOf(";", 4) + 1, d["attributeHeader"].es[0].id.indexOf(";", 15));
+						var documentId = linkAction.linkInfo.target.did;
+						window.open(window.location.href + "?evt=" + linkAction.evt + "&documentID=" + documentId + "&elementsPromptAnswers=" + d.attributeHeader.id + ";" + d.id + "&originMessageID=" + mstrApp.getMsgID() + "&selectorMode=1", "_blank"); // +"&visMode=0&currentViewMedia=1"
+				} // linkAction
 
 					return false;
 				})
